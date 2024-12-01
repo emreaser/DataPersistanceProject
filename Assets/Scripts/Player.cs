@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
 {
     private Camera mainCamera;
     private Vector3 mousePos;
+    bool canFire = true;
     AudioSource playerAuidoSource;
     [SerializeField] AudioClip fireAudio;
     GameManager gameManager;
@@ -36,17 +37,21 @@ public class Player : MonoBehaviour
         Quaternion newRotation = Quaternion.LookRotation((transform.position - mousePos), Vector3.forward);
         transform.rotation = new Quaternion (transform.rotation.x, transform.rotation.y, newRotation.z, newRotation.w);
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButton(0) && canFire)
         {
-            playerAuidoSource.PlayOneShot(fireAudio, 0.35f);
-            Instantiate(missile, (transform.position + (transform.up * 2)), transform.rotation);            
-        }
+                StartCoroutine(Shoot());            
+        } else { StopCoroutine(Shoot()); }
         }
 
     }
 
-    private void OnMouseDown()
+    IEnumerator Shoot()
     {
-        
+        canFire = false;
+        yield return new WaitForSeconds(0.2f);
+        playerAuidoSource.PlayOneShot(fireAudio, 0.35f);
+        Instantiate(missile, (transform.position + (transform.up * 2)), transform.rotation);
+        canFire = true;
     }
+ 
 }

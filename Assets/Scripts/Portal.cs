@@ -30,7 +30,7 @@ public class Portal : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && powerUpActive && !firing && gameManager.isGameActive)
+        if (Input.GetMouseButtonDown(1) && powerUpActive && !firing && gameManager.isGameActive)
         {
             portalAudioSource.PlayOneShot(portalFireSfx, 0.5f);
             spriteObject.GetComponent<SpriteRenderer>().color = Color.red;

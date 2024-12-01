@@ -37,9 +37,9 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        portalIntegrityText.text = "Portal Integrity " + portalIntergrity;
-        portalIntergrity = 10;
-        isGameActive = false;
+        StartGame();    
+        
+        
          
         
     }
@@ -191,9 +191,11 @@ public class GameManager : MonoBehaviour
     }
     public void StartGame()
     {
-        titleScreen.SetActive(false);
+        Time.timeScale = 1.0f;
         isGameActive = true;
         Cursor.SetCursor(cursorTexture, Vector2.up, CursorMode.Auto);
+        portalIntegrityText.text = "Portal Integrity " + portalIntergrity;
+        portalIntergrity = 10;
 
 
     }
