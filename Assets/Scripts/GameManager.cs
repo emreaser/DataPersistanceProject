@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using UnityEngine.SceneManagement;
 using UnityEditor;
 
 public class GameManager : MonoBehaviour
@@ -11,12 +10,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject[] enemyPrefabs;
     [SerializeField] GameObject boss;
     [SerializeField] GameObject fighter;
+    [SerializeField] GameUIHandler gameUIHandler;
 
-    [SerializeField] TextMeshProUGUI portalIntegrityText;
-    [SerializeField] TextMeshProUGUI scoreText;   
-    [SerializeField] TextMeshProUGUI waveCountText;
-    [SerializeField] GameObject restartScreen;
-    [SerializeField] GameObject titleScreen;
+   
+    //[SerializeField] GameObject titleScreen;
 
     [SerializeField] Texture2D cursorTexture;
 
@@ -38,10 +35,6 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         StartGame();    
-        
-        
-         
-        
     }
 
     // Update is called once per frame
@@ -74,7 +67,7 @@ public class GameManager : MonoBehaviour
     public void ReducePortalIntegrity(int damageAmount)
     {
         portalIntergrity -= damageAmount;
-        portalIntegrityText.text = "Portal Integrity " + portalIntergrity;
+        gameUIHandler.SetPortalIntegrityText(portalIntergrity);
 
         if (portalIntergrity <= 0)
         {
@@ -83,12 +76,51 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void StartGame()
+    {
+        Cursor.SetCursor(cursorTexture, Vector2.up, CursorMode.Auto);
+        Time.timeScale = 1.0f;
+        isGameActive = true;
+
+        portalIntergrity = 10;
+        gameUIHandler.SetPortalIntegrityText(portalIntergrity);
+        
+        if (MainManager.Instance.highestScore != 0)
+        {
+            gameUIHandler.SetHighestScoreText();
+        }
+        
+
+        if (MainManager.Instance.playerName != "")
+        {
+            gameUIHandler.SetPlayerNameText(MainManager.Instance.playerName);
+        }
+        else
+        {
+            int randomIndex = Random.Range(1, 500);
+            gameUIHandler.SetPlayerNameText("Player" + randomIndex);
+            MainManager.Instance.playerName = "Player" + randomIndex;
+        } 
+    }
+
     void GameOver()
     {
         isGameActive = false;
-        restartScreen.SetActive(true);
+        gameUIHandler.restartScreen.SetActive(true);
+
         Cursor.SetCursor(null, Vector2.up, CursorMode.Auto);
+
+
+        if (score > MainManager.Instance.highestScore)
+        {
+            MainManager.Instance.highestScore = score;
+            MainManager.Instance.highestScoreName = MainManager.Instance.playerName;
+            Debug.Log(MainManager.Instance.highestScoreName + "  " + MainManager.Instance.highestScore);
+            gameUIHandler.SetHighestScoreText();
+            MainManager.Instance.SaveHighestScore();
+        } 
     }
+
 
     IEnumerator SpawnEnemies()
     {
@@ -104,7 +136,8 @@ public class GameManager : MonoBehaviour
     {
         
         waveCount++;
-        waveCountText.text = "Wave: " + waveCount;
+        gameUIHandler.SetWaveCountText(waveCount);
+        
 
         if (waveEnemyCount < maxEnemyCount) 
         { 
@@ -115,7 +148,8 @@ public class GameManager : MonoBehaviour
     public void AddScore(float scoreToAdd)
     {
         score += scoreToAdd;
-        scoreText.text = "Score: " + score;
+        gameUIHandler.SetScoreText(score);
+        
     }
 
     void StartBossFight()
@@ -181,23 +215,4 @@ public class GameManager : MonoBehaviour
         result = new Vector3((boss.transform.position.x + Random.Range(-5.0f, 5.0f)), (boss.transform.position.y + Random.Range(-5.0f, 5.0f)), -0.15f);
         return result;
     }
-
-    public void RestartGame()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        Time.timeScale = 1.0f;
-        
-
-    }
-    public void StartGame()
-    {
-        Time.timeScale = 1.0f;
-        isGameActive = true;
-        Cursor.SetCursor(cursorTexture, Vector2.up, CursorMode.Auto);
-        portalIntegrityText.text = "Portal Integrity " + portalIntergrity;
-        portalIntergrity = 10;
-
-
-    }
-
 }

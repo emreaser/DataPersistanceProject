@@ -18,9 +18,15 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
+        
         mainCamera = Camera.main;
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         playerAuidoSource = gameObject.GetComponent<AudioSource>();
+
+        if (MainManager.Instance.shipSprite != null)
+        {
+            SetShipSprite(MainManager.Instance.shipSprite);
+        }
     }
     // Start is called before the first frame update
     void Start()
@@ -52,6 +58,11 @@ public class Player : MonoBehaviour
         playerAuidoSource.PlayOneShot(fireAudio, 0.35f);
         Instantiate(missile, (transform.position + (transform.up * 2)), transform.rotation);
         canFire = true;
+    }
+
+    void SetShipSprite(Sprite sprite)
+    {
+        gameObject.GetComponent<SpriteRenderer>().sprite = sprite;
     }
  
 }
