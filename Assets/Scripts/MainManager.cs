@@ -25,6 +25,8 @@ public class MainManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
+        Debug.Log(Application.persistentDataPath);
+
        
     }
 
